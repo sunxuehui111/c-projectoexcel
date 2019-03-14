@@ -66,4 +66,5 @@ public:
 	CString note;
 	CButton m_check;
 	CString path;
+	afx_msg void OnBnClickedBtexit();
 };

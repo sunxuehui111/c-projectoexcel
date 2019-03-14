@@ -60,6 +60,7 @@ BEGIN_MESSAGE_MAP(CFullAppDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BtSure, &CFullAppDlg::OnBnClickedBtsure)
 	ON_BN_CLICKED(IDC_BtInsert, &CFullAppDlg::OnBnClickedBtinsert)
+	ON_BN_CLICKED(IDC_BtExit, &CFullAppDlg::OnBnClickedBtexit)
 END_MESSAGE_MAP()
 
 
@@ -209,10 +210,10 @@ void CFullAppDlg::sqloperate()
 		int conutnum = 0;
 		while (!pRst->adoEOF)
 		{
-			if (pRst->GetCollect(2).vt != VT_NULL)
+			if (pRst->GetCollect("Note").vt != VT_NULL)
 			{
 				CString temp = (TCHAR *)(_bstr_t)pRst->GetFields()->GetItem
-				("name")->Value;
+				("Note")->Value;
 				m_note.InsertString(conutnum, temp);
 				//m_note.SetItemData(conutnum, conutnum);
 			}
@@ -245,7 +246,14 @@ void CFullAppDlg::exlceloperate()
 		insertValue();
 		indexcount++;
 	}
-	excelOperation->SaveWorkbookAs(path);
+	m_name.SetWindowTextW(_T(""));
+	m_countNum.SetWindowTextW(_T("1"));
+	m_unit.SetWindowTextW(_T("㎡"));
+	m_unitprice.SetWindowTextW(_T("0"));
+	m_price.SetWindowTextW(_T("0"));
+	m_siglenume.SetWindowTextW(_T("1"));
+	m_note.Clear();
+	m_name.GetFocus();
 }
 
 
@@ -338,7 +346,25 @@ void CFullAppDlg::initTitle()
 
 void CFullAppDlg::initString(int indexxx)
 {
+	strTitle = { "A","B","C","D","E","F","G" };
 	for (int i = 0; i < 7; i++) {
 		strTitle[i] += to_string(indexxx);
 	}
+}
+
+void CFullAppDlg::OnBnClickedBtexit()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	if (-1 != GetFileAttributes(path)) //如果文件存在
+	{
+		CString pathTemp = path + _T("-new");
+		excelOperation->SaveWorkbookAs(pathTemp);
+	}
+	else 
+	{
+		excelOperation->SaveWorkbookAs(path);
+	}
+	excelOperation->CloseApp();
+	pMyConnect.Release();
+	AfxGetMainWnd()->SendMessage(WM_CLOSE);
 }
