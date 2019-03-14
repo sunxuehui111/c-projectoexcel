@@ -1,3 +1,4 @@
 ﻿  FullAppDlg.cpp
 d:\vs 2017 project\makeaexcel\fullapp\fullappdlg.cpp(228): warning C4101: “e”: 未引用的局部变量
+  LINK : 没有找到 D:\VS 2017 Project\makeAexcel\x64\Debug\FullApp.exe 或上一个增量链接没有生成它；正在执行完全链接
   FullApp.vcxproj -> D:\VS 2017 Project\makeAexcel\x64\Debug\FullApp.exe

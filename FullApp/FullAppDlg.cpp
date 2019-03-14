@@ -233,7 +233,7 @@ void CFullAppDlg::sqloperate()
 
 void CFullAppDlg::exlceloperate()
 {
-	if (m_check)
+	if (m_check.GetCheck())
 	{
 		initString(indexcount);
 		initTitle();
@@ -243,7 +243,9 @@ void CFullAppDlg::exlceloperate()
 	{
 		initString(indexcount);
 		insertValue();
+		indexcount++;
 	}
+	excelOperation->SaveWorkbookAs(path);
 }
 
 
@@ -262,7 +264,7 @@ void CFullAppDlg::OnBnClickedBtsure()
 		initString(indexcount);
 		initTitle();
 		indexcount++;
-		excelOperation->SaveWorkbookAs(path);
+
 	}
 	else 
 	{
