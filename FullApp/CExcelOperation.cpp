@@ -262,6 +262,8 @@ void CExcelOperation::CloseApp()
 		vFalse((short)FALSE),
 		vOptional((long)DISP_E_PARAMNOTFOUND, VT_ERROR);
 	//m_ecDoc.Save();  
+	m_ecBook.Close(vOptional, vOptional, vOptional);
+	m_ecBooks.Close();
 	m_ecApp.Quit();
 	if (m_ecRange.m_lpDispatch)
 		m_ecRange.ReleaseDispatch();
@@ -275,7 +277,7 @@ void CExcelOperation::CloseApp()
 		m_ecBooks.ReleaseDispatch();
 	if (m_ecApp.m_lpDispatch)
 		m_ecApp.ReleaseDispatch();
-
+	
 }
 
 BOOL CExcelOperation::GetRangeAndValue(CString begin, CString end)

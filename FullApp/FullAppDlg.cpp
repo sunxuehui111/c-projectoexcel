@@ -30,6 +30,12 @@ CFullAppDlg::CFullAppDlg(CWnd* pParent /*=nullptr*/)
 	, path(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	excelOperation =  new CExcelOperation();;
+}
+
+CFullAppDlg::~CFullAppDlg()
+{
+	
 }
 
 void CFullAppDlg::DoDataExchange(CDataExchange* pDX)
@@ -136,7 +142,6 @@ BOOL CFullAppDlg::OnInitDialog()
 		CString strTimeName(timeName.c_str());
 		//strTimeName.Format(_T("%s"), timeName);
 		m_path.SetWindowTextW(strTimeName);
-		excelOperation = new CExcelOperation();
 	}
 	catch (_com_error &e)
 	{
@@ -207,21 +212,18 @@ void CFullAppDlg::sqloperate()
 		{
 			column_name.push_back(pRst->Fields->GetItem(_variant_t((long)i))->Name);
 		}
-		int conutnum = 0;
 		while (!pRst->adoEOF)
 		{
 			if (pRst->GetCollect("Note").vt != VT_NULL)
 			{
 				CString temp = (TCHAR *)(_bstr_t)pRst->GetFields()->GetItem
 				("Note")->Value;
-				m_note.InsertString(conutnum, temp);
-				//m_note.SetItemData(conutnum, conutnum);
+				m_note.AddString(temp);
 			}
 			else
 			{
 				return;
 			}
-			conutnum++;
 			pRst->MoveNext();
 		}
 		m_note.SetCurSel(0);
@@ -252,7 +254,8 @@ void CFullAppDlg::exlceloperate()
 	m_unitprice.SetWindowTextW(_T("0"));
 	m_price.SetWindowTextW(_T("0"));
 	m_siglenume.SetWindowTextW(_T("1"));
-	m_note.Clear();
+	m_note.ResetContent();
+	m_note.SetCurSel(-1);
 	m_name.GetFocus();
 }
 
@@ -265,14 +268,23 @@ void CFullAppDlg::OnBnClickedBtsure()
 	if (m_tatol.GetWindowTextLengthW() != 0) 
 	{
 		excelOperation->Create();
-		CString title,maxtitle;
+		CString title;
 		m_tatol.GetWindowTextW(title);
 		excelOperation->SetCellMerge(_T("A1"), _T("G1"), title);
 		indexcount = 2;
 		initString(indexcount);
 		initTitle();
 		indexcount++;
-
+		if (-1 != GetFileAttributes(path)) //如果文件存在
+		{
+			CString pathTemp = path + _T("-new.xls");
+			excelOperation->SaveWorkbookAs(pathTemp);
+		}
+		else
+		{
+			excelOperation->SaveWorkbookAs(path);
+		}
+		GetDlgItem(IDC_BtSure)->EnableWindow(0);
 	}
 	else 
 	{
@@ -304,6 +316,12 @@ BOOL CFullAppDlg::PreTranslateMessage(MSG* pMsg)
 		exlceloperate();
 		return TRUE;
 	}
+
+	if (pMsg->wParam == VK_F2)
+	{
+		exit();
+		return TRUE;
+	}
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
 
@@ -330,6 +348,14 @@ void CFullAppDlg::insertValue()
 	excelOperation->setCellValue(strTitle[4], unitprice);
 	excelOperation->setCellValue(strTitle[5], price);
 	excelOperation->setCellValue(strTitle[6], note);
+	excelOperation->SaveWorkbook();
+}
+
+void CFullAppDlg::exit()
+{
+	excelOperation->CloseApp();
+	pMyConnect.Release();
+	AfxGetMainWnd()->SendMessage(WM_CLOSE);
 }
 
 void CFullAppDlg::initTitle()
@@ -355,16 +381,5 @@ void CFullAppDlg::initString(int indexxx)
 void CFullAppDlg::OnBnClickedBtexit()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	if (-1 != GetFileAttributes(path)) //如果文件存在
-	{
-		CString pathTemp = path + _T("-new");
-		excelOperation->SaveWorkbookAs(pathTemp);
-	}
-	else 
-	{
-		excelOperation->SaveWorkbookAs(path);
-	}
-	excelOperation->CloseApp();
-	pMyConnect.Release();
-	AfxGetMainWnd()->SendMessage(WM_CLOSE);
+	exit();
 }

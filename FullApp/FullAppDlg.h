@@ -15,7 +15,7 @@ class CFullAppDlg : public CDialogEx
 // 构造
 public:
 	CFullAppDlg(CWnd* pParent = nullptr);	// 标准构造函数
-
+	~CFullAppDlg();
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_FULLAPP_DIALOG };
@@ -41,6 +41,7 @@ protected:
 	void initString(int indexxx);
 	void initTitle();
 	void insertValue();
+	void exit();
 	static std::string GetCurrentTime();
 public:
 	afx_msg void OnBnClickedBtsure();
